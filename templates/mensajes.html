@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #3c4552 !important;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 80vh;
+            border-radius: 10px;
+            background: white;
+        }
+        .container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand">Smart Living</a>
+          <span class="navbar-text text-light">
+            {{ user_email }}
+          </span>
+          <form class="d-flex">
+            <button
+              class="btn btn-light"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasExample"
+              aria-controls="offcanvasExample">
+              Menu
+            </button>
+          </form>
+        </div>
+      </nav>
+    
+      <div
+        class="offcanvas offcanvas-start"
+        tabindex="-1"
+        id="offcanvasExample"
+        aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu Principal</h5>
+          <button
+            type="button"
+            class="btn-close text-reset"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close">
+          </button>
+        </div>
+        <div class="offcanvas-body">
+          <div>
+            Revisa a detalle tus movimientos y los del condominio. 
+          </div>
+          <div class="dropdown mt-3">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown">
+              Más Información
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li><a class="dropdown-item" href="{{ url_for('residents') }}">Inicio</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('status') }}">Estado de cuenta</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('egresos') }}">Egresos generales</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('mensajeria') }}">Chat</a></li>
+              <li><a class="dropdown-item" href="">Dashboard</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+<div class="container">
+
+<div class="text-center mt-5">
+      <a class="btn btn-info btn-lg px-5 py-2 fs-4" href="main.php">Atrás</a>
+</div>
+
+  <!-- El iframe apunta al servidor Flask -->
+  <iframe 
+      src="http://localhost:5000/mensajeria?email={{ user_email }}" 
+      allow="camera; microphone"
+      title="Chat en tiempo real">
+  </iframe>
+</div>
+
+</body>
+</html>

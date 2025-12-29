@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Egresos generales{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-8">
+    <form id="formFiltros" class="row g-3">
+
+      <div class="col-md-6">
+        <label for="status" class="form-label text-light">Status:</label>
+        <select name="status" class="form-select" id="status">
+          <option value=""></option>
+          <option value="pagado">Pagado</option>
+          <option value="pago atrasado">Pago Atrasado</option>
+          <option value="pago parcial">Pago Parcial</option>
+          <option value="no pagado">No Pagado</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label for="mes_nombre" class="form-label text-light">Mes:</label>
+        <select name="mes_nombre" class="form-select" id="mes_nombre">
+          <option value=""></option>
+          {% for mes in ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+            <option value="{{ mes }}">{{ mes }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-info">Buscar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="resultado" class="mt-4"></div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}  {# 🔹 Esto asegura que no eliminas scripts del base.html #}
+
+  <script>
+  // Inicializar manualmente dropdowns en offcanvas
+  document.addEventListener('DOMContentLoaded', function () {
+    var dropdownElements = document.querySelectorAll('.dropdown-toggle');
+    dropdownElements.forEach(function (el) {
+      new bootstrap.Dropdown(el);
+    });
+  });
+
+  // Manejo del formulario
+  document.getElementById("formFiltros").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const response = await fetch("/filtrar", {
+      method: "POST",
+      body: formData
+    });
+    const html = await response.text();
+    document.getElementById("resultado").innerHTML = html;
+  });
+  </script>
+{% endblock %}

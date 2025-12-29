@@ -1,0 +1,70 @@
+<!-- template Nav -->
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand">Smart Living</a>
+      <span class="navbar-text text-light">
+        {{ user_email }}
+      </span>
+      <form class="d-flex">
+        <button
+          class="btn btn-light"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasExample"
+          aria-controls="offcanvasExample">
+          Menu
+        </button>
+      </form>
+    </div>
+  </nav>
+  
+  <div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="offcanvasExample"
+    aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu Principal</h5>
+      <button
+        type="button"
+        class="btn-close text-reset"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close">
+      </button>
+    </div>
+    <div class="offcanvas-body">
+      <div>
+        Revisa a detalle tus movimientos y los del condominio.
+      </div>
+  
+      <div class="dropdown mt-3 position-relative">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton"
+          data-bs-toggle="dropdown"
+          data-bs-auto-close="outside"
+          aria-expanded="false">
+          Más Información
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="{{ url_for('residents') }}">Inicio</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('status') }}">Estado de cuenta</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('egresos') }}">Egresos generales</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('mensajeria') }}">Chat</a></li>
+          <li><a class="dropdown-item" href="#">Dashboard</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Inicialización manual de dropdowns (garantiza compatibilidad dentro de offcanvas) -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var dropdownElements = document.querySelectorAll('.dropdown-toggle');
+    dropdownElements.forEach(function (el) {
+      new bootstrap.Dropdown(el);
+    });
+  });
+  </script>
+  

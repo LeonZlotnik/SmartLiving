@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+
+<style>
+.msg {
+  padding: 6px 10px;
+  margin: 5px 0;
+  border-radius: 10px;
+  max-width: 50%;
+  display: inline-block;
+}
+
+.msg.me {
+  background: #d1e7ff; /* azul suave */
+  margin-left: auto;
+  display: block;
+  text-align: left;
+}
+
+.msg.other {
+  background: #d1ffe8;
+  margin-right: auto;
+  display: block;
+  text-align: left;
+}
+
+</style>
+<div class="container mt-4 text-center">
+
+  <div id="chat-box" 
+       class="mx-auto mt-3 bg-white rounded shadow-sm"
+       style="height: 400px; overflow-y: auto; border: 1px solid #000; padding: 10px;">
+  </div>
+
+  <div class="mt-3">
+    <input 
+      id="message"
+      class="form-control d-inline-block"
+      style="width: 80%;"
+      placeholder="Escribe un mensaje..."
+      autocomplete="off"
+    >
+    <button class="btn btn-primary ms-2" onclick="sendMessage()">Enviar</button>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <script>
+// Scroll automático cuando se agregan mensajes
+const chatBox = document.getElementById('chat-box');
+
+const observer = new MutationObserver(() => {
+  const atBottom = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 5;
+  if (atBottom) {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+});
+
+observer.observe(chatBox, { childList: true });
+
+// --- Variables enviadas desde Flask ---
+const USERNAME = "{{ username }}";  // Quien soy yo
+const USER_ID  = "{{ user_id }}";   // ID (email o nombre, depende del caso)
+const RECEIVER = "{{ receiver }}";  // A quién le escribo (solo admin)
+</script>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+{% endblock %}
+

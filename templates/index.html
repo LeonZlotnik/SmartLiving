@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<main class="flex-shrink-0" style="height: 100vh;">
+  <div class="container">
+    <br /><br />
+    <h1 class="mt-8" style="color: #d0d9eb;">Revisa la información del condominio</h1>
+    <p class="lead" style="color: #d0d9eb;">
+      Introduce con detalle lo que quieres obtener
+    </p>
+    <br />
+    <div id="input-group" class="input-group mb-3">
+      <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu pregunta..." />
+      <div id="input-group-append" class="input-group-append" style="margin-left: 1%">
+        <button id="gpt-button" class="btn btn-dark">Consultar</button>
+        <button id="clear-button" class="btn btn-light" onclick="recargarPagina()">Limpiar</button>
+      </div>
+    </div>
+
+    <div id="list-group" class="list-group w-auto"></div>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function recargarPagina() {
+  location.reload();
+}
+
+$("#gpt-button").click(async (event) => {
+  event.preventDefault();
+  const question = $("#chat-input").val().trim();
+  if (!question) return;
+
+  let html_data = `
+    <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3"
+       style="margin-bottom:1%; background-color: rgba(215, 215, 216, 0.2); box-shadow: 5px 5px 8px #000000">
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <img src="{{ url_for('static', filename='images/user_icon.png') }}" alt="icono"
+             style="width:30px; height:30px; object-fit:cover; border-radius:50%;">
+        <div>
+          <p class="mb-0 opacity-75" style="color: #d0d9eb;">${question}</p>
+        </div>
+      </div>
+    </a>`;
+  $("#chat-input").val("");
+  $("#list-group").append(html_data);
+
+  try {
+    const response = await fetch("/residents", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ prompt: question }),
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      alert("Error: " + (errData.error || "Error en la petición"));
+      return;
+    }
+
+    const data = await response.json();
+
+    let gpt_data = `
+      <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3"
+         style="margin-bottom:1%; background-color: rgba(215, 215, 216, 0.2); box-shadow: 5px 5px 8px #000000">
+        <div class="d-flex gap-2 w-100 justify-content-between">
+          <img src="{{ url_for('static', filename='images/chatbot_icon.png') }}" alt="icono"
+               style="width:30px; height:30px; object-fit:cover; border-radius:50%;">
+          <div>
+            <p class="mb-0 opacity-75" style="color: #d0d9eb;">${data.answer}</p>
+          </div>
+        </div>
+      </a>`;
+    $("#list-group").append(gpt_data);
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
+});
+</script>
+{% endblock %}
+
+
+
+
