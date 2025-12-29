@@ -63,17 +63,29 @@ def guardar_mensaje(sender, receiver, message,):
     cursor.close()
     conn.close()
 
-def obtener_historial(username):
+def obtener_historial(username, receiver=None):
     conn = get_mysql_connection()
     cursor = conn.cursor(dictionary=True)
 
-    query = """
-        SELECT sender, receiver, message, timestamp
-        FROM mensajes
-        WHERE sender = %s OR receiver = %s
-        ORDER BY timestamp ASC
-    """
-    cursor.execute(query,(username, username))
+    if receiver:
+        query = """
+            SELECT sender, receiver, message, timestamp
+            FROM mensajes
+            WHERE (sender = %s AND receiver = %s)
+               OR (sender = %s AND receiver = %s)
+            ORDER BY timestamp ASC
+        """
+        params = (username, receiver, receiver, username)
+    else:
+        query = """
+            SELECT sender, receiver, message, timestamp
+            FROM mensajes
+            WHERE sender = %s OR receiver = %s
+            ORDER BY timestamp ASC
+        """
+        params = (username, username)
+
+    cursor.execute(query, params)
     msg = cursor.fetchall()
 
     # Convertir datetime → string
@@ -439,8 +451,21 @@ def handle_send_message(data):
     }, broadcast=True)
 
 @socketio.on("register_user")
-def register_user(username):
-    historial = obtener_historial(username)
+def register_user(data):
+    username = None
+    receiver = None
+
+    if isinstance(data, dict):
+        username = data.get("username")
+        receiver = data.get("receiver")
+    else:
+        username = data
+
+    if not username:
+        emit("chat_history", [])
+        return
+
+    historial = obtener_historial(username, receiver)
     emit("chat_history", historial)
 
 # -----------------------------

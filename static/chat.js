@@ -45,8 +45,11 @@ socket.on("connect", () => {
     console.log("Socket conectado:", socket.id);
 
     if (USERNAME) {
-        console.log("Registrando usuario:", USERNAME);
-        socket.emit("register_user", USERNAME);
+        console.log("Registrando usuario:", USERNAME, "=>", RECEIVER);
+        socket.emit("register_user", {
+            username: USERNAME,
+            receiver: RECEIVER,
+        });
     }
 });
 
@@ -76,16 +79,16 @@ socket.on("chat_history", (mensajes) => {
 
     // Ordenar por fecha ascendente si viene con timestamp
     mensajes.sort((a, b) =>
-        (new Date(a.fecha || 0)) - (new Date(b.fecha || 0))
+        (new Date(a.timestamp || 0)) - (new Date(b.timestamp || 0))
     );
 
     mensajes.forEach(msg => {
-        const isMe = msg.emisor === USERNAME;
+        const isMe = msg.sender === USERNAME;
         const cls = isMe ? "msg me" : "msg other";
 
         chatBox.insertAdjacentHTML("beforeend", `
             <div class="${cls}">
-                <strong>${msg.emisor}:</strong> ${msg.mensaje}
+                <strong>${msg.sender}:</strong> ${msg.message}
             </div>
         `);
     });
