@@ -43,11 +43,21 @@ $result = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+<style>
+   body {
+    background-color: #3c4552 !important;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+</style>
 <body>
 <?php require_once('navbar.php'); ?>
 
 <div class="container">
-  <h3>Conversaciones</h3>
+  <div class="text-center mt-5">
+      <a class="btn btn-info btn-lg px-5 py-2 fs-4" href="main.php">Atrás</a>
+    </div>
+  </br>
 
   <?php if ($result && $result->num_rows === 0): ?>
     <div class="alert alert-warning">No hay conversaciones todavía.</div>

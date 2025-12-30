@@ -1,7 +1,12 @@
 <?php 
 include("../sesion.php");
 
-$adminEmail = $_SESSION['username'];
+$adminEmail = $_SESSION['admin_email'] ?? ($_SESSION['username'] ?? '');
+
+if ($adminEmail === '') {
+  header("Location: mensajeria_admin_home.php");
+  exit;
+}
 
 $receiverEmail = $_GET['email'] ?? '';
 if ($receiverEmail === '') {
@@ -12,6 +17,16 @@ if ($receiverEmail === '') {
 $secret = 'ZL@$nik199!';
 
 $token = hash_hmac('sha256', $adminEmail, $secret);
+
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? '127.0.0.1';
+$port = 8080;
+$query = http_build_query([
+  'admin_email' => $adminEmail,
+  'email' => $receiverEmail,
+  'token' => $token,
+]);
+$chatUrl = sprintf('%s://%s:%d/msn-admin?%s', $scheme, $host, $port, $query);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,10 +58,11 @@ $token = hash_hmac('sha256', $adminEmail, $secret);
 
 <div class="text-center mt-5">
       <a class="btn btn-info btn-lg px-5 py-2 fs-4" href="main.php">Atrás</a>
-</div>
+    </div>
+  </br>
 
 <iframe 
-   src="http://127.0.0.1:8888/msn-admin?admin_email=<?php echo urlencode($adminEmail); ?>&email=<?php echo urlencode($receiverEmail); ?>&token=<?php echo $token; ?>"
+   src=<?php echo htmlspecialchars($chatUrl, ENT_QUOTES, 'UTF-8');?>
    allow="camera; microphone"
    title="Chat en tiempo real">
 </iframe>
